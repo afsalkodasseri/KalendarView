@@ -114,7 +114,7 @@ public class GridAdapter extends ArrayAdapter {
             eventCalendar.setTime(allEvents.get(i).getDate());
             if(dayValue == eventCalendar.get(Calendar.DAY_OF_MONTH) && displayMonth == eventCalendar.get(Calendar.MONTH) + 1
                     && displayYear == eventCalendar.get(Calendar.YEAR)){
-                eventIndicator.setBackgroundColor(Color.parseColor("#FF4081"));
+                eventIndicator.setBackgroundResource(R.drawable.calendarview_event);
             }
         }
         return view;

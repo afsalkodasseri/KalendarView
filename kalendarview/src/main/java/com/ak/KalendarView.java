@@ -151,10 +151,11 @@ public class KalendarView extends LinearLayout{
         mEvents=new ArrayList<>();
         String sDate1="27/02/2020";
         try {
-            Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+            Date date1=new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH).parse(sDate1);
+            Date date2=new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH).parse("08/09/2023");
 
         EventObjects evd=new EventObjects(10,"hello",date1);
-        EventObjects evde=new EventObjects(11,"hi",new Date("27/01/2020"));
+        EventObjects evde=new EventObjects(11,"hi",date2);
 
         mEvents.add(evd);
         mEvents.add(evde);
