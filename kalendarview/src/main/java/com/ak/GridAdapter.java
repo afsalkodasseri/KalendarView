@@ -14,16 +14,22 @@ import androidx.annotation.Nullable;
 
 import com.ak.R;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class GridAdapter extends ArrayAdapter {
     private static final String TAG = GridAdapter.class.getSimpleName();
     private LayoutInflater mInflater;
     private List<Date> monthlyDates;
     private Calendar currentDate;
-    private List<EventObjects> allEvents;
+    public List<EventObjects> allEvents;
+    //for change the color for specific dates
+    public List<ColoredDate> colorFulDates = new ArrayList<>();
+    SimpleDateFormat sdfDmy = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
     Date color_date;
     Context cos;
     public GridAdapter(Context context, List<Date> monthlyDates, Calendar currentDate, List<EventObjects> allEvents,Date color) {
@@ -93,8 +99,11 @@ public class GridAdapter extends ArrayAdapter {
             cellNumber.setTextColor(Color.WHITE);
         }
 
-            view.setTag(position);
+        view.setTag(position);
 
+        int customDateColor = getDateColor(mDate);
+        if(customDateColor!=0)
+            cellNumber.setTextColor(customDateColor);
 
 //        view.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -131,5 +140,15 @@ public class GridAdapter extends ArrayAdapter {
     @Override
     public int getPosition(Object item) {
         return monthlyDates.indexOf(item);
+    }
+
+    private int getDateColor(Date mDate){
+        for(int i=0;i<colorFulDates.size();i++){
+            if(sdfDmy.format(mDate).equals(sdfDmy.format(colorFulDates.get(i).date)))
+            {
+                return colorFulDates.get(i).color;
+            }
+        }
+        return 0;
     }
 }

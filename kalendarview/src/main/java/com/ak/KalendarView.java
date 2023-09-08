@@ -187,5 +187,19 @@ public class KalendarView extends LinearLayout{
         void onDateSelected();
     }
 
+    public void setEvents(List<EventObjects> mEvents){
+        if(mAdapter!=null){
+            mAdapter.allEvents = mEvents;
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void setColoredDates(List<ColoredDate> colorDates){
+        if(mAdapter!=null){
+            mAdapter.colorFulDates = colorDates;
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
 
 }
