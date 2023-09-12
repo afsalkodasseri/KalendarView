@@ -2,6 +2,8 @@ package com.ak;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +34,12 @@ public class GridAdapter extends ArrayAdapter {
     SimpleDateFormat sdfDmy = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
     Date color_date;
     Context cos;
-    public GridAdapter(Context context, List<Date> monthlyDates, Calendar currentDate, List<EventObjects> allEvents,Date color) {
+    //customizations
+    Drawable todayIndicator=null,selectedIndicator=null,eventIndicator=null;
+    int dateColor=0,nonMonthDateColor=0,todayDateColor=0,selectedDateColor=0;
+    Typeface dateFontFace;
+    int dateTextStyle = 0;
+    public GridAdapter(Context context, List<Date> monthlyDates, Calendar currentDate, List<EventObjects> allEvents,Date color,List<ColoredDate> colorFulDates) {
         super(context, R.layout.calendarview_cell);
         this.monthlyDates = monthlyDates;
         this.currentDate = currentDate;
@@ -40,7 +47,26 @@ public class GridAdapter extends ArrayAdapter {
         mInflater = LayoutInflater.from(context);
         cos=context;
         color_date=color;
+        this.colorFulDates=colorFulDates;
     }
+
+    public void setDrawables(Drawable todayIndicator,Drawable selectedIndicator,Drawable eventIndicator){
+        this.todayIndicator = todayIndicator;
+        this.selectedIndicator = selectedIndicator;
+        this.eventIndicator = eventIndicator;
+    }
+    public void setTextColors(int dateColor,int nonMonthDateColor,int todayDateColor,int selectedDateColor){
+        this.dateColor = dateColor;
+        this.nonMonthDateColor = nonMonthDateColor;
+        this.todayDateColor = todayDateColor;
+        this.selectedDateColor = selectedDateColor;
+    }
+
+    public void setFontProperties(Typeface fontFace,int textStyle){
+        dateFontFace = fontFace;
+        dateTextStyle = textStyle;
+    }
+
     @NonNull
     @Override
     public View getView(int position, final View convertView, final ViewGroup parent) {
@@ -68,8 +94,12 @@ public class GridAdapter extends ArrayAdapter {
         }
         LinearLayout llParent = view.findViewById(R.id.ll_parent);
         TextView cellNumber = (TextView)view.findViewById(R.id.calendar_date_id);
+        //set font family
+        if(dateTextStyle!=0)  cellNumber.setTextAppearance(getContext(),dateTextStyle);
+        if(dateFontFace!=null)  cellNumber.setTypeface(dateFontFace);
+
         if(displayMonth == currentMonth && displayYear == currentYear){
-            cellNumber.setTextColor(Color.BLACK);
+            cellNumber.setTextColor(dateColor!=0?dateColor:Color.BLACK);
             cellNumber.setTag(0);
 
         }else{
@@ -81,7 +111,7 @@ public class GridAdapter extends ArrayAdapter {
             else{
                 cellNumber.setTag(2);
             }
-            cellNumber.setTextColor(Color.LTGRAY);
+            cellNumber.setTextColor(nonMonthDateColor!=0?nonMonthDateColor:Color.LTGRAY);
 
         }
         //Add day to calendar
@@ -90,13 +120,19 @@ public class GridAdapter extends ArrayAdapter {
 
 
         if(displayMonth == toMonth && displayYear == toYear&&dayValue==toDay){
-            llParent.setBackgroundResource(R.drawable.calendarview_today);
+            if(todayIndicator!=null)
+                llParent.setBackground(todayIndicator);
+            else
+                llParent.setBackgroundResource(R.drawable.calendarview_today);
             cellNumber.setTag(-1);
         }
         if(displayMonth == colorMonth&&colorday==dayValue)
         {
-            llParent.setBackgroundResource(R.drawable.calendarview_select_date);
-            cellNumber.setTextColor(Color.WHITE);
+            if(selectedIndicator!=null)
+                llParent.setBackground(selectedIndicator);
+            else
+                llParent.setBackgroundResource(R.drawable.calendarview_select_date);
+            cellNumber.setTextColor(selectedDateColor!=0?selectedDateColor:Color.WHITE);
         }
 
         view.setTag(position);
@@ -117,13 +153,16 @@ public class GridAdapter extends ArrayAdapter {
 
 
         //Add events to the calendar
-        TextView eventIndicator = (TextView)view.findViewById(R.id.event_id);
+        TextView tvEventIndicator = (TextView)view.findViewById(R.id.event_id);
         Calendar eventCalendar = Calendar.getInstance();
         for(int i = 0; i < allEvents.size(); i++){
             eventCalendar.setTime(allEvents.get(i).getDate());
             if(dayValue == eventCalendar.get(Calendar.DAY_OF_MONTH) && displayMonth == eventCalendar.get(Calendar.MONTH) + 1
                     && displayYear == eventCalendar.get(Calendar.YEAR)){
-                eventIndicator.setBackgroundResource(R.drawable.calendarview_event);
+                if(eventIndicator!=null)
+                    tvEventIndicator.setBackground(eventIndicator);
+                else
+                    tvEventIndicator.setBackgroundResource(R.drawable.calendarview_event);
             }
         }
         return view;
@@ -142,7 +181,7 @@ public class GridAdapter extends ArrayAdapter {
         return monthlyDates.indexOf(item);
     }
 
-    private int getDateColor(Date mDate){
+    public int getDateColor(Date mDate){
         for(int i=0;i<colorFulDates.size();i++){
             if(sdfDmy.format(mDate).equals(sdfDmy.format(colorFulDates.get(i).date)))
             {

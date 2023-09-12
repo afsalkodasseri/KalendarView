@@ -1,11 +1,18 @@
 package com.ak;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.GridLayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
@@ -13,6 +20,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.ak.R;
 
@@ -43,6 +53,13 @@ public class KalendarView extends LinearLayout{
     Calendar today_date=Calendar.getInstance();
     Date color_date;
     DateSelector mDateSelector;
+    List<ColoredDate> colorFulDates = new ArrayList<>();
+
+    //customizations
+    Drawable todayIndicator=null,selectedIndicator=null,eventIndicator=null;
+    int dateColor=0,nonMonthDateColor=0,todayDateColor=0,selectedDateColor=0;
+    Typeface monthFontFace=null,weekFontFace=null,dateFontFace=null;
+    int monthTextStyle=0,weekTextStyle=0,dateTextStyle=0;
 
     public KalendarView(Context context) {
         super(context);
@@ -51,6 +68,58 @@ public class KalendarView extends LinearLayout{
         super(context, attrs);
         this.context = context;
         color_date=today_date.getTime();
+
+        todayIndicator = AppCompatResources.getDrawable(context,R.drawable.calendarview_today);
+        selectedIndicator = AppCompatResources.getDrawable(context,R.drawable.calendarview_select_date);
+        eventIndicator = AppCompatResources.getDrawable(context,R.drawable.calendarview_event);
+        dateColor = Color.BLACK;
+        nonMonthDateColor = Color.LTGRAY;
+        todayDateColor = Color.BLACK;
+        selectedDateColor = Color.WHITE;
+
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,
+                R.styleable.kalendar, 0, 0);
+
+        int drwTodayId = typedArray.getResourceId(R.styleable.kalendar_todayIndicator,0);
+        if(drwTodayId!=0)
+            todayIndicator = AppCompatResources.getDrawable(context,drwTodayId);
+
+        int drwSelectedId = typedArray.getResourceId(R.styleable.kalendar_selectedIndicator,0);
+        if(drwSelectedId!=0)
+            selectedIndicator = AppCompatResources.getDrawable(context,drwSelectedId);
+
+        int drwEventId = typedArray.getResourceId(R.styleable.kalendar_eventIndicator,0);
+        if(drwEventId!=0)
+            eventIndicator = AppCompatResources.getDrawable(context,drwEventId);
+
+        int colorDate = typedArray.getColor(R.styleable.kalendar_dateColor,0);
+        if(colorDate!=0)
+            dateColor = colorDate;
+        int colorNonMonth = typedArray.getColor(R.styleable.kalendar_nonMonthDateColor,0);
+        if(colorNonMonth!=0)
+            nonMonthDateColor = colorNonMonth;
+        int colorToday = typedArray.getColor(R.styleable.kalendar_todayDateColor,0);
+        if(colorToday!=0)
+            todayDateColor = colorToday;
+        int colorSelected = typedArray.getColor(R.styleable.kalendar_selectedDateColor,0);
+        if(colorSelected!=0)
+            selectedDateColor = colorSelected;
+
+        // Set a custom font family via its reference
+        int monthFontId = typedArray.getResourceId(R.styleable.kalendar_monthFontFamily,0);
+        if(monthFontId!=0)
+            monthFontFace = ResourcesCompat.getFont(context, monthFontId);
+        int weekFontId = typedArray.getResourceId(R.styleable.kalendar_weekFontFamily,0);
+        if(weekFontId!=0)
+            weekFontFace = ResourcesCompat.getFont(context, weekFontId);
+        int dateFontId = typedArray.getResourceId(R.styleable.kalendar_dateFontFamily,0);
+        if(dateFontId!=0)
+            dateFontFace = ResourcesCompat.getFont(context, dateFontId);
+        //for text styles
+        int monthTextStyle = typedArray.getResourceId(R.styleable.kalendar_monthTextStyle,0);
+        int weekTextStyle = typedArray.getResourceId(R.styleable.kalendar_weekTextStyle,0);
+        int dateTextStyle = typedArray.getResourceId(R.styleable.kalendar_dateTextStyle,0);
+
         initializeUILayout();
         setUpCalendarAdapter();
         setPreviousButtonClickEvent();
@@ -70,8 +139,28 @@ public class KalendarView extends LinearLayout{
         nextButton = (ImageView)view.findViewById(R.id.next_month);
         currentDate = (TextView)view.findViewById(R.id.display_current_date);
         calendarGridView = (GridView)view.findViewById(R.id.calendar_grid);
-
-
+        //apply textstyle
+        if(monthTextStyle!=0) currentDate.setTextAppearance(context,monthTextStyle);
+        if(weekTextStyle!=0){
+            ((TextView)view.findViewById(R.id.sun)).setTextAppearance(context,weekTextStyle);
+            ((TextView)view.findViewById(R.id.mon)).setTextAppearance(context,weekTextStyle);
+            ((TextView)view.findViewById(R.id.tue)).setTextAppearance(context,weekTextStyle);
+            ((TextView)view.findViewById(R.id.wed)).setTextAppearance(context,weekTextStyle);
+            ((TextView)view.findViewById(R.id.thu)).setTextAppearance(context,weekTextStyle);
+            ((TextView)view.findViewById(R.id.fri)).setTextAppearance(context,weekTextStyle);
+            ((TextView)view.findViewById(R.id.sat)).setTextAppearance(context,weekTextStyle);
+        }
+        //set font family
+        if(monthFontFace!=null) currentDate.setTypeface(monthFontFace);
+        if(weekFontFace!=null){
+            ((TextView)view.findViewById(R.id.sun)).setTypeface(weekFontFace);
+            ((TextView)view.findViewById(R.id.mon)).setTypeface(weekFontFace);
+            ((TextView)view.findViewById(R.id.tue)).setTypeface(weekFontFace);
+            ((TextView)view.findViewById(R.id.wed)).setTypeface(weekFontFace);
+            ((TextView)view.findViewById(R.id.thu)).setTypeface(weekFontFace);
+            ((TextView)view.findViewById(R.id.fri)).setTypeface(weekFontFace);
+            ((TextView)view.findViewById(R.id.sat)).setTypeface(weekFontFace);
+        }
     }
     private void setPreviousButtonClickEvent(){
         previousButton.setOnClickListener(new OnClickListener() {
@@ -97,9 +186,9 @@ public class KalendarView extends LinearLayout{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 pos=(int)view.getTag();
                 LinearLayout llParent = view.findViewById(R.id.ll_parent);
-                llParent.setBackgroundResource(R.drawable.calendarview_select_date);
+                llParent.setBackground(selectedIndicator);
                 TextView txt=view.findViewById(R.id.calendar_date_id);
-                txt.setTextColor(Color.WHITE);
+                txt.setTextColor(selectedDateColor);
                 color_date=dayValueInCells.get(pos);
 
                 if((prev!=-1)&&prev!=cr_pos)
@@ -107,16 +196,19 @@ public class KalendarView extends LinearLayout{
                     LinearLayout prevParent = parent.getChildAt(prev).findViewById(R.id.ll_parent);
                     prevParent.setBackgroundColor(Color.parseColor("#ffffff"));
                     TextView txtd=parent.getChildAt(prev).findViewById(R.id.calendar_date_id);
-                    txtd.setTextColor((int)(txtd.getTag())==0?Color.BLACK:Color.LTGRAY);
+                    txtd.setTextColor((int)(txtd.getTag())==0?dateColor:nonMonthDateColor);
                 }
                 if(prev==cr_pos)
                 {
                     View childView = parent.getChildAt(prev);
                     if(childView!=null){
                         LinearLayout todayParent = childView.findViewById(R.id.ll_parent);
-                        todayParent.setBackgroundResource(R.drawable.calendarview_today);
+                        todayParent.setBackground(todayIndicator);
                         TextView txtd=childView.findViewById(R.id.calendar_date_id);
-                        txtd.setTextColor(Color.BLACK);
+                        txtd.setTextColor(dateColor);
+                        int customDateColor = mAdapter.getDateColor(dayValueInCells.get(prev));
+                        if(customDateColor!=0)
+                            txtd.setTextColor(customDateColor);
                     }
                 }
                 prev=pos;
@@ -176,8 +268,16 @@ public class KalendarView extends LinearLayout{
         currentDate.setText(sDate);
         prev=dayValueInCells.indexOf(color_date);
         cr_pos=dayValueInCells.indexOf(today_date.getTime());
-        mAdapter = new GridAdapter(context, dayValueInCells, cal, mEvents,color_date);
+        mAdapter = new GridAdapter(context, dayValueInCells, cal, mEvents,color_date,colorFulDates);
+        mAdapter.setDrawables(todayIndicator,selectedIndicator,eventIndicator);
+        mAdapter.setTextColors(dateColor,nonMonthDateColor,todayDateColor,selectedDateColor);
+        mAdapter.setFontProperties(dateFontFace,dateTextStyle);
         calendarGridView.setAdapter(mAdapter);
+
+//        //for animated change
+//        Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.grid_anim);
+//        GridLayoutAnimationController controller = new GridLayoutAnimationController(animation, .2f, .2f);
+//        calendarGridView.setLayoutAnimation(controller);
 
     }
 
@@ -190,6 +290,7 @@ public class KalendarView extends LinearLayout{
     public void setEvents(List<EventObjects> mEvents){
         if(mAdapter!=null){
             mAdapter.allEvents = mEvents;
+            this.mEvents = mEvents;
             mAdapter.notifyDataSetChanged();
         }
     }
@@ -197,6 +298,7 @@ public class KalendarView extends LinearLayout{
     public void setColoredDates(List<ColoredDate> colorDates){
         if(mAdapter!=null){
             mAdapter.colorFulDates = colorDates;
+            colorFulDates = colorDates;
             mAdapter.notifyDataSetChanged();
         }
     }

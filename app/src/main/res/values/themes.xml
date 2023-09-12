@@ -6,4 +6,8 @@
     </style>
 
     <style name="Theme.MyLibraries" parent="Base.Theme.MyLibraries" />
+    <style name="weekText" parent="TextAppearance.AppCompat.Medium" >
+        <item name="fontFamily">@font/helv</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

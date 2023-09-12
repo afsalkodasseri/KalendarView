@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="kalendar">
+        <!--        Indicator to show the today's date. accepts drawables only-->
+        <attr name="todayIndicator" format="reference"/>
+        <!--        Indicator to show the selected date. accepts drawables only-->
+        <attr name="selectedIndicator" format="reference"/>
+        <!--        To indicate the events in the date cell. accepts drawables only-->
+        <attr name="eventIndicator" format="reference"/>
+        <!--        Color to change the date text color of showing month-->
+        <attr name="dateColor" format="color"/>
+        <!--        Color to change the date text color of non-showing month(previous and next month's)-->
+        <attr name="nonMonthDateColor" format="color"/>
+        <!--        Color to change the date text color of today's date. it will not work now-->
+        <attr name="todayDateColor" format="color"/>
+        <!--        Color to change the date text color of selected date-->
+        <attr name="selectedDateColor" format="color"/>
+        <!--        Font Family of month, year head in the top-->
+        <attr name="monthFontFamily" format="reference"/>
+        <!--        Font Family of week days head-->
+        <attr name="weekFontFamily" format="reference"/>
+        <!--        Font Family of date text-->
+        <attr name="dateFontFamily" format="reference"/>
+        <!--        TextAppearance of month,year head-->
+        <attr name="monthTextStyle" format="reference"/>
+        <!--        TextAppearance of weekdays head-->
+        <attr name="weekTextStyle" format="reference"/>
+        <!--        TextAppearance of date text-->
+        <attr name="dateTextStyle" format="reference"/>
+    </declare-styleable>
+</resources>
