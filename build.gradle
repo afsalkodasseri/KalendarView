@@ -10,8 +10,8 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId = 'com.ak'
-            artifactId = 'kalendarview'
-            version = "1.0"
+            artifactId = 'KalendarView'
+            version = "2.0"
         }
     }
 }
