@@ -25,6 +25,12 @@ android {
         targetCompatibility JavaVersion.VERSION_17
         sourceCompatibility JavaVersion.VERSION_17
     }
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
@@ -41,6 +47,10 @@ publishing {
             groupId = 'com.github.afsalkodasseri'
             artifactId = 'kalendarview'
             version = "2.0.3"
+
+            afterEvaluate {
+                from components.release
+            }
         }
     }
 }
