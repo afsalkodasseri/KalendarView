@@ -4,14 +4,3 @@ plugins {
     id 'com.android.library' version '8.0.1' apply false
     id 'maven-publish'
 }
-
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'com.ak'
-            artifactId = 'KalendarView'
-            version = "2.0"
-        }
-    }
-}
