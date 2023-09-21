@@ -3,7 +3,7 @@ Customisable calendar view for android
 
 Customize many things as much you need
 
-[image]
+![image info](screenshots/github_poster.jpg)
 
 ## Features
 - Adding events supported
