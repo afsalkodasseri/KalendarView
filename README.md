@@ -143,7 +143,7 @@ If you've found an error while using the library, please let me know
 <br>
 
 
-**Thank you**
+**Thank you :heart:**
 
 <br>
 <br>
