@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="kalendar">
+    <declare-styleable name="KalendarView">
         <!--        Indicator to show the today's date. accepts drawables only-->
         <attr name="todayIndicator" format="reference"/>
         <!--        Indicator to show the selected date. accepts drawables only-->
@@ -27,5 +27,11 @@
         <attr name="weekTextStyle" format="reference"/>
         <!--        TextAppearance of date text-->
         <attr name="dateTextStyle" format="reference"/>
+        <!--        Drawable for next icon-->
+        <attr name="nextIcon" format="reference"/>
+        <!--        Drawable for prev icon-->
+        <attr name="prevIcon" format="reference"/>
+        <!--        color for calendar background-->
+        <attr name="calendarBackground" format="color"/>
     </declare-styleable>
 </resources>

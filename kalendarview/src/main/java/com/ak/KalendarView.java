@@ -60,6 +60,8 @@ public class KalendarView extends LinearLayout{
     int dateColor=0,nonMonthDateColor=0,todayDateColor=0,selectedDateColor=0;
     Typeface monthFontFace=null,weekFontFace=null,dateFontFace=null;
     int monthTextStyle=0,weekTextStyle=0,dateTextStyle=0;
+    Drawable nextIcon=null,prevIcon=null;
+    int calendarBackgroundColor=0;
 
     public KalendarView(Context context) {
         super(context);
@@ -68,6 +70,10 @@ public class KalendarView extends LinearLayout{
         super(context, attrs);
         this.context = context;
         color_date=today_date.getTime();
+        Calendar tempTomorrow = Calendar.getInstance();
+        tempTomorrow.setTime(today_date.getTime());
+        tempTomorrow.add(Calendar.DATE,1);
+        color_date=tempTomorrow.getTime();
 
         todayIndicator = AppCompatResources.getDrawable(context,R.drawable.calendarview_today);
         selectedIndicator = AppCompatResources.getDrawable(context,R.drawable.calendarview_select_date);
@@ -76,49 +82,64 @@ public class KalendarView extends LinearLayout{
         nonMonthDateColor = Color.LTGRAY;
         todayDateColor = Color.BLACK;
         selectedDateColor = Color.WHITE;
+        calendarBackgroundColor = Color.WHITE;
 
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,
-                R.styleable.kalendar, 0, 0);
+                R.styleable.KalendarView, 0, 0);
 
-        int drwTodayId = typedArray.getResourceId(R.styleable.kalendar_todayIndicator,0);
+        int drwTodayId = typedArray.getResourceId(R.styleable.KalendarView_todayIndicator,0);
         if(drwTodayId!=0)
             todayIndicator = AppCompatResources.getDrawable(context,drwTodayId);
 
-        int drwSelectedId = typedArray.getResourceId(R.styleable.kalendar_selectedIndicator,0);
+        int drwSelectedId = typedArray.getResourceId(R.styleable.KalendarView_selectedIndicator,0);
         if(drwSelectedId!=0)
             selectedIndicator = AppCompatResources.getDrawable(context,drwSelectedId);
 
-        int drwEventId = typedArray.getResourceId(R.styleable.kalendar_eventIndicator,0);
+        int drwEventId = typedArray.getResourceId(R.styleable.KalendarView_eventIndicator,0);
         if(drwEventId!=0)
             eventIndicator = AppCompatResources.getDrawable(context,drwEventId);
 
-        int colorDate = typedArray.getColor(R.styleable.kalendar_dateColor,0);
+        int colorDate = typedArray.getColor(R.styleable.KalendarView_dateColor,0);
         if(colorDate!=0)
             dateColor = colorDate;
-        int colorNonMonth = typedArray.getColor(R.styleable.kalendar_nonMonthDateColor,0);
+        int colorNonMonth = typedArray.getColor(R.styleable.KalendarView_nonMonthDateColor,0);
         if(colorNonMonth!=0)
             nonMonthDateColor = colorNonMonth;
-        int colorToday = typedArray.getColor(R.styleable.kalendar_todayDateColor,0);
+        int colorToday = typedArray.getColor(R.styleable.KalendarView_todayDateColor,0);
         if(colorToday!=0)
             todayDateColor = colorToday;
-        int colorSelected = typedArray.getColor(R.styleable.kalendar_selectedDateColor,0);
+        int colorSelected = typedArray.getColor(R.styleable.KalendarView_selectedDateColor,0);
         if(colorSelected!=0)
             selectedDateColor = colorSelected;
 
         // Set a custom font family via its reference
-        int monthFontId = typedArray.getResourceId(R.styleable.kalendar_monthFontFamily,0);
+        int monthFontId = typedArray.getResourceId(R.styleable.KalendarView_monthFontFamily,0);
         if(monthFontId!=0)
             monthFontFace = ResourcesCompat.getFont(context, monthFontId);
-        int weekFontId = typedArray.getResourceId(R.styleable.kalendar_weekFontFamily,0);
+        int weekFontId = typedArray.getResourceId(R.styleable.KalendarView_weekFontFamily,0);
         if(weekFontId!=0)
             weekFontFace = ResourcesCompat.getFont(context, weekFontId);
-        int dateFontId = typedArray.getResourceId(R.styleable.kalendar_dateFontFamily,0);
+        int dateFontId = typedArray.getResourceId(R.styleable.KalendarView_dateFontFamily,0);
         if(dateFontId!=0)
             dateFontFace = ResourcesCompat.getFont(context, dateFontId);
         //for text styles
-        int monthTextStyle = typedArray.getResourceId(R.styleable.kalendar_monthTextStyle,0);
-        int weekTextStyle = typedArray.getResourceId(R.styleable.kalendar_weekTextStyle,0);
-        int dateTextStyle = typedArray.getResourceId(R.styleable.kalendar_dateTextStyle,0);
+        monthTextStyle = typedArray.getResourceId(R.styleable.KalendarView_monthTextStyle,0);
+        weekTextStyle = typedArray.getResourceId(R.styleable.KalendarView_weekTextStyle,0);
+        dateTextStyle = typedArray.getResourceId(R.styleable.KalendarView_dateTextStyle,0);
+
+        //for next icon
+        int tempNextIcon = typedArray.getResourceId(R.styleable.KalendarView_nextIcon,0);
+        if(tempNextIcon!=0)
+            nextIcon = AppCompatResources.getDrawable(context,tempNextIcon);
+        //for prev icon
+        int tempPrevIcon = typedArray.getResourceId(R.styleable.KalendarView_prevIcon,0);
+        if(tempPrevIcon!=0)
+            prevIcon = AppCompatResources.getDrawable(context,tempPrevIcon);
+
+        //for calendarbackground
+        int colorBg = typedArray.getColor(R.styleable.KalendarView_calendarBackground,0);
+        if(colorBg!=0)
+            calendarBackgroundColor = colorBg;
 
         initializeUILayout();
         setUpCalendarAdapter();
@@ -139,6 +160,9 @@ public class KalendarView extends LinearLayout{
         nextButton = (ImageView)view.findViewById(R.id.next_month);
         currentDate = (TextView)view.findViewById(R.id.display_current_date);
         calendarGridView = (GridView)view.findViewById(R.id.calendar_grid);
+        LinearLayout llRoot = (LinearLayout) view.findViewById(R.id.ll_root);
+        LinearLayout llCalendarHead = (LinearLayout) view.findViewById(R.id.ll_calendar_head);
+        LinearLayout llCalendarWeek = (LinearLayout)view.findViewById(R.id.ll_calendar_week);
         //apply textstyle
         if(monthTextStyle!=0) currentDate.setTextAppearance(context,monthTextStyle);
         if(weekTextStyle!=0){
@@ -161,6 +185,18 @@ public class KalendarView extends LinearLayout{
             ((TextView)view.findViewById(R.id.fri)).setTypeface(weekFontFace);
             ((TextView)view.findViewById(R.id.sat)).setTypeface(weekFontFace);
         }
+
+        //for next, prev icons
+        if(nextIcon!=null)
+            nextButton.setImageDrawable(nextIcon);
+        if(prevIcon!=null)
+            previousButton.setImageDrawable(prevIcon);
+
+        //set calendar background
+        llRoot.setBackgroundColor(calendarBackgroundColor);
+        llCalendarHead.setBackgroundColor(calendarBackgroundColor);
+        llCalendarWeek.setBackgroundColor(calendarBackgroundColor);
+        calendarGridView.setBackgroundColor(calendarBackgroundColor);
     }
     private void setPreviousButtonClickEvent(){
         previousButton.setOnClickListener(new OnClickListener() {
@@ -194,7 +230,7 @@ public class KalendarView extends LinearLayout{
                 if((prev!=-1)&&prev!=cr_pos)
                 {
                     LinearLayout prevParent = parent.getChildAt(prev).findViewById(R.id.ll_parent);
-                    prevParent.setBackgroundColor(Color.parseColor("#ffffff"));
+                    prevParent.setBackgroundColor(calendarBackgroundColor);
                     TextView txtd=parent.getChildAt(prev).findViewById(R.id.calendar_date_id);
                     txtd.setTextColor((int)(txtd.getTag())==0?dateColor:nonMonthDateColor);
                 }
@@ -272,6 +308,7 @@ public class KalendarView extends LinearLayout{
         mAdapter.setDrawables(todayIndicator,selectedIndicator,eventIndicator);
         mAdapter.setTextColors(dateColor,nonMonthDateColor,todayDateColor,selectedDateColor);
         mAdapter.setFontProperties(dateFontFace,dateTextStyle);
+        mAdapter.setCalendarBackgroundColor(calendarBackgroundColor);
         calendarGridView.setAdapter(mAdapter);
 
 //        //for animated change

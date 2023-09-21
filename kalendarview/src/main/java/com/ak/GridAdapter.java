@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.ak.R;
 
@@ -39,6 +40,7 @@ public class GridAdapter extends ArrayAdapter {
     int dateColor=0,nonMonthDateColor=0,todayDateColor=0,selectedDateColor=0;
     Typeface dateFontFace;
     int dateTextStyle = 0;
+    int calendarBackgroundColor = 0;
     public GridAdapter(Context context, List<Date> monthlyDates, Calendar currentDate, List<EventObjects> allEvents,Date color,List<ColoredDate> colorFulDates) {
         super(context, R.layout.calendarview_cell);
         this.monthlyDates = monthlyDates;
@@ -67,6 +69,10 @@ public class GridAdapter extends ArrayAdapter {
         dateTextStyle = textStyle;
     }
 
+    public void setCalendarBackgroundColor(int backgroundColor){
+        this.calendarBackgroundColor = backgroundColor;
+    }
+
     @NonNull
     @Override
     public View getView(int position, final View convertView, final ViewGroup parent) {
@@ -90,13 +96,19 @@ public class GridAdapter extends ArrayAdapter {
         if(view == null){
             view = mInflater.inflate(R.layout.calendarview_cell, parent, false);
             LinearLayout llParent = view.findViewById(R.id.ll_parent);
-            llParent.setBackgroundColor(Color.parseColor("#ffffff"));
+            ConstraintLayout clRoot = view.findViewById(R.id.cl_root);
+            llParent.setBackgroundColor(calendarBackgroundColor);
+            clRoot.setBackgroundColor(calendarBackgroundColor);
         }
         LinearLayout llParent = view.findViewById(R.id.ll_parent);
+        ConstraintLayout clRoot = view.findViewById(R.id.cl_root);
         TextView cellNumber = (TextView)view.findViewById(R.id.calendar_date_id);
         //set font family
         if(dateTextStyle!=0)  cellNumber.setTextAppearance(getContext(),dateTextStyle);
         if(dateFontFace!=null)  cellNumber.setTypeface(dateFontFace);
+        //set background
+        llParent.setBackgroundColor(calendarBackgroundColor);
+        clRoot.setBackgroundColor(calendarBackgroundColor);
 
         if(displayMonth == currentMonth && displayYear == currentYear){
             cellNumber.setTextColor(dateColor!=0?dateColor:Color.BLACK);
@@ -125,6 +137,8 @@ public class GridAdapter extends ArrayAdapter {
             else
                 llParent.setBackgroundResource(R.drawable.calendarview_today);
             cellNumber.setTag(-1);
+            if(todayDateColor!=0)
+                cellNumber.setTextColor(todayDateColor);
         }
         if(displayMonth == colorMonth&&colorday==dayValue)
         {
