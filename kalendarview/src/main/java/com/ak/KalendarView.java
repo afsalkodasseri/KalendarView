@@ -69,6 +69,8 @@ public class KalendarView extends LinearLayout{
     public KalendarView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+        cal = getZeroTime(cal);
+        today_date = getZeroTime(today_date);
         color_date=today_date.getTime();
         Calendar tempTomorrow = Calendar.getInstance();
         tempTomorrow.setTime(today_date.getTime());
@@ -270,7 +272,7 @@ public class KalendarView extends LinearLayout{
                     cr_pos=-2;
                 }
                 if(mDateSelector!=null)
-                    mDateSelector.onDateSelected();
+                    mDateSelector.onDateClicked(color_date);
             }
         });
     }
@@ -285,8 +287,8 @@ public class KalendarView extends LinearLayout{
         EventObjects evd=new EventObjects(10,"hello",date1);
         EventObjects evde=new EventObjects(11,"hi",date2);
 
-        mEvents.add(evd);
-        mEvents.add(evde);
+//        mEvents.add(evd);
+//        mEvents.add(evde);
         } catch (ParseException e) {
             Toast.makeText(getContext(),e.toString(),Toast.LENGTH_SHORT).show();
         }
@@ -319,9 +321,8 @@ public class KalendarView extends LinearLayout{
     }
 
 
-    interface DateSelector
-    {
-        void onDateSelected();
+    public interface DateSelector {
+        void onDateClicked(Date selectedDate);
     }
 
     public void setEvents(List<EventObjects> mEvents){
@@ -340,5 +341,30 @@ public class KalendarView extends LinearLayout{
         }
     }
 
+    public void setDateSelector(DateSelector mSelector){
+        this.mDateSelector = mSelector;
+    }
 
+    public void setInitialSelectedDate(Date initialDate){
+        color_date = getZeroTime(initialDate);
+        setUpCalendarAdapter();
+    }
+
+    private Date getZeroTime(Date date){
+        Calendar tempCal = Calendar.getInstance();
+        tempCal.setTime(date);
+        tempCal.set(Calendar.HOUR,0);
+        tempCal.set(Calendar.MINUTE,0);
+        tempCal.set(Calendar.SECOND,0);
+        tempCal.set(Calendar.MILLISECOND,0);
+        return tempCal.getTime();
+    }
+    private Calendar getZeroTime(Calendar mCalendar){
+        Calendar tempCal = (Calendar) mCalendar.clone();
+        tempCal.set(Calendar.HOUR,0);
+        tempCal.set(Calendar.MINUTE,0);
+        tempCal.set(Calendar.SECOND,0);
+        tempCal.set(Calendar.MILLISECOND,0);
+        return tempCal;
+    }
 }

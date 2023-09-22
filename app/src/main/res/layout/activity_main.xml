@@ -4,26 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F3F3F3"
     tools:context=".MainActivity">
 
-    <com.ak.KalendarView
-        android:id="@+id/kalendar"
-        android:layout_width="wrap_content"
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:monthTextStyle="@style/weekText"
-        app:weekTextStyle="@style/weekText"
-        app:dateTextStyle="@style/weekText"
-        app:nextIcon="@drawable/calendarview_front"
-        app:prevIcon="@drawable/calendarview_back"
-        app:todayDateColor="#027DB5"
-        app:calendarBackground="#FFFFFF"
-        app:todayIndicator="@drawable/custom_today"
-        app:selectedIndicator = "@drawable/custom_select_date"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        app:cardCornerRadius="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
+        <com.ak.KalendarView
+            android:id="@+id/kalendar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="10dp"
+            app:calendarBackground="#FFFFFF"
+            app:dateTextStyle="@style/weekText"
+            app:monthTextStyle="@style/weekText"
+            app:nextIcon="@drawable/calendarview_front"
+            app:prevIcon="@drawable/calendarview_back"
+            app:selectedIndicator="@drawable/custom_select_date"
+            app:todayDateColor="#027DB5"
+            app:todayIndicator="@drawable/custom_today"
+            app:weekTextStyle="@style/weekText" />
+    </androidx.cardview.widget.CardView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

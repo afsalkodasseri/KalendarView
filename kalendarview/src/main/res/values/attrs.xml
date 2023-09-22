@@ -11,7 +11,7 @@
         <attr name="dateColor" format="color"/>
         <!--        Color to change the date text color of non-showing month(previous and next month's)-->
         <attr name="nonMonthDateColor" format="color"/>
-        <!--        Color to change the date text color of today's date. it will not work now-->
+        <!--        Color to change the date text color of today's date-->
         <attr name="todayDateColor" format="color"/>
         <!--        Color to change the date text color of selected date-->
         <attr name="selectedDateColor" format="color"/>

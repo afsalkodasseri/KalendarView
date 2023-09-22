@@ -140,6 +140,11 @@ public class GridAdapter extends ArrayAdapter {
             if(todayDateColor!=0)
                 cellNumber.setTextColor(todayDateColor);
         }
+        //set custom date color before set the selected color
+        int customDateColor = getDateColor(mDate);
+        if(customDateColor!=0)
+            cellNumber.setTextColor(customDateColor);
+
         if(displayMonth == colorMonth&&colorday==dayValue)
         {
             if(selectedIndicator!=null)
@@ -150,10 +155,6 @@ public class GridAdapter extends ArrayAdapter {
         }
 
         view.setTag(position);
-
-        int customDateColor = getDateColor(mDate);
-        if(customDateColor!=0)
-            cellNumber.setTextColor(customDateColor);
 
 //        view.setOnClickListener(new View.OnClickListener() {
 //            @Override
