@@ -243,7 +243,7 @@ public class KalendarView extends LinearLayout{
                         LinearLayout todayParent = childView.findViewById(R.id.ll_parent);
                         todayParent.setBackground(todayIndicator);
                         TextView txtd=childView.findViewById(R.id.calendar_date_id);
-                        txtd.setTextColor(dateColor);
+                        txtd.setTextColor(todayDateColor);
                         int customDateColor = mAdapter.getDateColor(dayValueInCells.get(prev));
                         if(customDateColor!=0)
                             txtd.setTextColor(customDateColor);
