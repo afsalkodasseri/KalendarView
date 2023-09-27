@@ -11,6 +11,7 @@ import com.ak.EventObjects;
 import com.ak.KalendarView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.EventObject;
 import java.util.List;
@@ -39,7 +40,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mKalendarView.setInitialSelectedDate(new Date());
+        mKalendarView.setMonthChanger(changedMonth -> Log.d("Changed","month changed "+changedMonth));
+        Calendar tempCal = Calendar.getInstance();
+        tempCal.set(Calendar.DATE,1);
+        tempCal.set(Calendar.MONTH,4);
+        mKalendarView.setInitialSelectedDate(tempCal.getTime());
 
     }
 }

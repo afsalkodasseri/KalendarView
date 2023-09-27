@@ -53,6 +53,7 @@ public class KalendarView extends LinearLayout{
     Calendar today_date=Calendar.getInstance();
     Date color_date;
     DateSelector mDateSelector;
+    MonthChanger mMonthChanger;
     List<ColoredDate> colorFulDates = new ArrayList<>();
 
     //customizations
@@ -201,79 +202,72 @@ public class KalendarView extends LinearLayout{
         calendarGridView.setBackgroundColor(calendarBackgroundColor);
     }
     private void setPreviousButtonClickEvent(){
-        previousButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cal.add(Calendar.MONTH, -1);
-                setUpCalendarAdapter();
-            }
+        previousButton.setOnClickListener(v -> {
+            cal.add(Calendar.MONTH, -1);
+            setUpCalendarAdapter();
+            if(mMonthChanger!=null)
+                mMonthChanger.onMonthChanged(cal.getTime());
         });
     }
     private void setNextButtonClickEvent(){
-        nextButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cal.add(Calendar.MONTH, 1);
-                setUpCalendarAdapter();
-            }
+        nextButton.setOnClickListener(v -> {
+            cal.add(Calendar.MONTH, 1);
+            setUpCalendarAdapter();
+            if(mMonthChanger!=null)
+                mMonthChanger.onMonthChanged(cal.getTime());
         });
     }
     public void setGridCellClickEvents(){
-        calendarGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                pos=(int)view.getTag();
-                LinearLayout llParent = view.findViewById(R.id.ll_parent);
-                llParent.setBackground(selectedIndicator);
-                TextView txt=view.findViewById(R.id.calendar_date_id);
-                txt.setTextColor(selectedDateColor);
-                color_date=dayValueInCells.get(pos);
+        calendarGridView.setOnItemClickListener((parent, view, position, id) -> {
+            pos=(int)view.getTag();
+            LinearLayout llParent = view.findViewById(R.id.ll_parent);
+            llParent.setBackground(selectedIndicator);
+            TextView txt=view.findViewById(R.id.calendar_date_id);
+            txt.setTextColor(selectedDateColor);
+            color_date=dayValueInCells.get(pos);
 
-                if((prev!=-1)&&prev!=cr_pos)
-                {
-                    LinearLayout prevParent = parent.getChildAt(prev).findViewById(R.id.ll_parent);
-                    prevParent.setBackgroundColor(calendarBackgroundColor);
-                    TextView txtd=parent.getChildAt(prev).findViewById(R.id.calendar_date_id);
-                    txtd.setTextColor((int)(txtd.getTag())==0?dateColor:nonMonthDateColor);
-                }
-                if(prev==cr_pos)
-                {
-                    View childView = parent.getChildAt(prev);
-                    if(childView!=null){
-                        LinearLayout todayParent = childView.findViewById(R.id.ll_parent);
-                        todayParent.setBackground(todayIndicator);
-                        TextView txtd=childView.findViewById(R.id.calendar_date_id);
-                        txtd.setTextColor(todayDateColor);
-                        int customDateColor = mAdapter.getDateColor(dayValueInCells.get(prev));
-                        if(customDateColor!=0)
-                            txtd.setTextColor(customDateColor);
-                    }
-                }
-                prev=pos;
-
-                int month_id=(int)txt.getTag();
-                if(month_id==-1)
-                {
-                   cr_pos=pos;
-                }
-                if(month_id==1)
-                {
-                    cal.add(Calendar.MONTH, 1);
-                    setUpCalendarAdapter();
-
-                    cr_pos=-2;
-
-                }
-                if(month_id==2)
-                {
-                    cal.add(Calendar.MONTH, -1);
-                    setUpCalendarAdapter();
-
-                    cr_pos=-2;
-                }
-                if(mDateSelector!=null)
-                    mDateSelector.onDateClicked(color_date);
+            if((prev!=-1)&&prev!=cr_pos) {
+                LinearLayout prevParent = parent.getChildAt(prev).findViewById(R.id.ll_parent);
+                prevParent.setBackgroundColor(calendarBackgroundColor);
+                TextView txtd=parent.getChildAt(prev).findViewById(R.id.calendar_date_id);
+                txtd.setTextColor((int)(txtd.getTag())==0?dateColor:nonMonthDateColor);
             }
+            if(prev==cr_pos) {
+                View childView = parent.getChildAt(prev);
+                if(childView!=null){
+                    LinearLayout todayParent = childView.findViewById(R.id.ll_parent);
+                    todayParent.setBackground(todayIndicator);
+                    TextView txtd=childView.findViewById(R.id.calendar_date_id);
+                    txtd.setTextColor(todayDateColor);
+                    int customDateColor = mAdapter.getDateColor(dayValueInCells.get(prev));
+                    if(customDateColor!=0)
+                        txtd.setTextColor(customDateColor);
+                }
+            }
+            prev=pos;
+
+            int month_id=(int)txt.getTag();
+            if(month_id==-1) {
+               cr_pos=pos;
+            }
+            if(month_id==1) {
+                cal.add(Calendar.MONTH, 1);
+                setUpCalendarAdapter();
+                cr_pos=-2;
+                //to inform month changed
+                if(mMonthChanger!=null)
+                    mMonthChanger.onMonthChanged(cal.getTime());
+            }
+            if(month_id==2) {
+                cal.add(Calendar.MONTH, -1);
+                setUpCalendarAdapter();
+                cr_pos=-2;
+                //to inform month changed
+                if(mMonthChanger!=null)
+                    mMonthChanger.onMonthChanged(cal.getTime());
+            }
+            if(mDateSelector!=null)
+                mDateSelector.onDateClicked(color_date);
         });
     }
     private void setUpCalendarAdapter(){
@@ -325,6 +319,10 @@ public class KalendarView extends LinearLayout{
         void onDateClicked(Date selectedDate);
     }
 
+    public interface MonthChanger {
+        void onMonthChanged(Date changedMonth);
+    }
+
     public void setEvents(List<EventObjects> mEvents){
         if(mAdapter!=null){
             mAdapter.allEvents = mEvents;
@@ -344,9 +342,13 @@ public class KalendarView extends LinearLayout{
     public void setDateSelector(DateSelector mSelector){
         this.mDateSelector = mSelector;
     }
+    public void setMonthChanger(MonthChanger mChanger){
+        this.mMonthChanger = mChanger;
+    }
 
     public void setInitialSelectedDate(Date initialDate){
         color_date = getZeroTime(initialDate);
+        cal.setTime(color_date);
         setUpCalendarAdapter();
     }
 
