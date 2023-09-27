@@ -50,7 +50,7 @@ dependencyResolutionManagement {
 ```
 dependancies {
   ...
-  implementation 'com.github.afsalkodasseri:KalendarView:2.2'
+  implementation 'com.github.afsalkodasseri:KalendarView:2.3'
 }
 ```
 <br>
@@ -110,6 +110,32 @@ events.add(new EventObjects("meeting",new Date()));
 <!---set the events list--->
 mKalendarView.setEvents(events);
 ```
+<br>
+
+
+- For Set the date cell click listener
+
+```
+mKalendarView.setDateSelector(new KalendarView.DateSelector() {
+  @Override
+  public void onDateClicked(Date selectedDate) {
+
+    Log.d("DateSel",selectedDate.toString());
+    <!---Do watevery you want this clicked date--->
+
+  }
+});
+```
+<br>
+
+
+- For Set the initial selected date
+
+```
+mKalendarView.setInitialSelectedDate(new Date());
+```
+<br>
+
 
 <br>
 <br>
