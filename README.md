@@ -3,7 +3,7 @@ Customisable calendar view for android
 
 Customize many things as much you need
 
-![image info](screenshots/github_poster.jpg)
+![image info](screenshots/zyro-image.png)
 
 ## Features
 - Adding events supported
