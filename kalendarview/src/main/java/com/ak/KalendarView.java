@@ -412,6 +412,24 @@ public class KalendarView extends LinearLayout{
         setUpCalendarAdapter();
     }
 
+    /**
+     * The function get the current selected date
+     *
+     * @return  selected date
+     */
+    public Date getSelectedDate(){
+        return color_date;
+    }
+
+    /**
+     * The function get the current showing month date
+     *
+     * @return  showing month's date
+     */
+    public Date getShowingMonth(){
+        return cal.getTime();
+    }
+
     private Date getZeroTime(Date date){
         Calendar tempCal = Calendar.getInstance();
         tempCal.setTime(date);
