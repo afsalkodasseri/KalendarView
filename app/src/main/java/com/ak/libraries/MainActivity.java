@@ -42,9 +42,16 @@ public class MainActivity extends AppCompatActivity {
 
         mKalendarView.setMonthChanger(changedMonth -> Log.d("Changed","month changed "+changedMonth));
         Calendar tempCal = Calendar.getInstance();
-        tempCal.set(Calendar.DATE,1);
-        tempCal.set(Calendar.MONTH,4);
-        mKalendarView.setInitialSelectedDate(tempCal.getTime());
+        tempCal.set(Calendar.DATE,11);
+        List<EventObjects> events2 = new ArrayList<>();
+        events2.add(new EventObjects("meeting",tempCal.getTime()));
+
+        tempCal.set(Calendar.DATE,15);
+        List<ColoredDate> datesColors2 = new ArrayList<>();
+        datesColors2.add(new ColoredDate(tempCal.getTime(), getResources().getColor(R.color.red_holiday)));
+        mKalendarView.addColoredDates(datesColors2);
+
+        mKalendarView.addEvents(events2);
 
     }
 }

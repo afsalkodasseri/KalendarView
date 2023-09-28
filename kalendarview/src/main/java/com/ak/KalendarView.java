@@ -48,7 +48,7 @@ public class KalendarView extends LinearLayout{
     private GridAdapter mAdapter;
     int prev=-1,pos,cr_pos=-2;
     List<Date> dayValueInCells;
-    List<EventObjects> mEvents;
+    List<EventObjects> mEvents = new ArrayList<>();
     Date selected;
     Calendar today_date=Calendar.getInstance();
     Date color_date;
@@ -159,13 +159,13 @@ public class KalendarView extends LinearLayout{
     private void initializeUILayout(){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.calendarview, this);
-        previousButton = (ImageView)view.findViewById(R.id.previous_month);
-        nextButton = (ImageView)view.findViewById(R.id.next_month);
-        currentDate = (TextView)view.findViewById(R.id.display_current_date);
-        calendarGridView = (GridView)view.findViewById(R.id.calendar_grid);
-        LinearLayout llRoot = (LinearLayout) view.findViewById(R.id.ll_root);
-        LinearLayout llCalendarHead = (LinearLayout) view.findViewById(R.id.ll_calendar_head);
-        LinearLayout llCalendarWeek = (LinearLayout)view.findViewById(R.id.ll_calendar_week);
+        previousButton = view.findViewById(R.id.previous_month);
+        nextButton = view.findViewById(R.id.next_month);
+        currentDate = view.findViewById(R.id.display_current_date);
+        calendarGridView = view.findViewById(R.id.calendar_grid);
+        LinearLayout llRoot = view.findViewById(R.id.ll_root);
+        LinearLayout llCalendarHead = view.findViewById(R.id.ll_calendar_head);
+        LinearLayout llCalendarWeek = view.findViewById(R.id.ll_calendar_week);
         //apply textstyle
         if(monthTextStyle!=0) currentDate.setTextAppearance(context,monthTextStyle);
         if(weekTextStyle!=0){
@@ -231,6 +231,9 @@ public class KalendarView extends LinearLayout{
                 prevParent.setBackgroundColor(calendarBackgroundColor);
                 TextView txtd=parent.getChildAt(prev).findViewById(R.id.calendar_date_id);
                 txtd.setTextColor((int)(txtd.getTag())==0?dateColor:nonMonthDateColor);
+                int customDateColor = mAdapter.getDateColor(dayValueInCells.get(prev));
+                if(customDateColor!=0 && (int)txtd.getTag()==0)
+                    txtd.setTextColor(customDateColor);
             }
             if(prev==cr_pos) {
                 View childView = parent.getChildAt(prev);
@@ -272,7 +275,6 @@ public class KalendarView extends LinearLayout{
     }
     private void setUpCalendarAdapter(){
         dayValueInCells = new ArrayList<Date>();
-        mEvents=new ArrayList<>();
         String sDate1="27/02/2020";
         try {
             Date date1=new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH).parse(sDate1);
@@ -322,15 +324,44 @@ public class KalendarView extends LinearLayout{
     public interface MonthChanger {
         void onMonthChanged(Date changedMonth);
     }
-
+    /**
+     * set events with the date cell<br>
+     * in the KalendarView <br>
+     *
+     * @param mEvents List of {@link com.ak.EventObjects} object
+     *
+     */
     public void setEvents(List<EventObjects> mEvents){
         if(mAdapter!=null){
+            mAdapter.allEvents.clear();
+            this.mEvents.clear();
             mAdapter.allEvents = mEvents;
             this.mEvents = mEvents;
             mAdapter.notifyDataSetChanged();
         }
     }
+    /**
+     * To add the events without losing the older<br>
+     * events in the KalendarView <br>
+     *
+     * @param mEvents List of {@link com.ak.EventObjects} object
+     *
+     */
+    public void addEvents(List<EventObjects> mEvents){
+        if(mAdapter!=null){
+            mAdapter.allEvents.addAll(mEvents);
+            this.mEvents.addAll(mEvents);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
 
+    /**
+     * set colored dates with special colors<br>
+     * in the KalendarView. <br>it will overwrite the existing colored dates <br>
+     *
+     * @param colorDates List of {@link com.ak.ColoredDate} object
+     *
+     */
     public void setColoredDates(List<ColoredDate> colorDates){
         if(mAdapter!=null){
             mAdapter.colorFulDates = colorDates;
@@ -338,14 +369,43 @@ public class KalendarView extends LinearLayout{
             mAdapter.notifyDataSetChanged();
         }
     }
-
+    /**
+     * To add the colored dates without losing the older<br>
+     * colored dates in the KalendarView <br>
+     *
+     * @param colorDates List of {@link com.ak.ColoredDate} object
+     *
+     */
+    public void addColoredDates(List<ColoredDate> colorDates){
+        if(mAdapter!=null){
+            mAdapter.colorFulDates.addAll(colorDates);
+            colorFulDates.addAll(colorDates);
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+    /**
+     * Listener for the date click events in the KalendarView <br>
+     * it gives the new clicked date
+     *
+     */
     public void setDateSelector(DateSelector mSelector){
         this.mDateSelector = mSelector;
     }
+    /**
+     * Listener for the month changes in the KalendarView <br>
+     * it gives the new month changed date
+     *
+     */
     public void setMonthChanger(MonthChanger mChanger){
         this.mMonthChanger = mChanger;
     }
 
+    /**
+     * The function set the first selected
+     * date as initial date
+     *
+     * @param initialDate date object
+     */
     public void setInitialSelectedDate(Date initialDate){
         color_date = getZeroTime(initialDate);
         cal.setTime(color_date);
