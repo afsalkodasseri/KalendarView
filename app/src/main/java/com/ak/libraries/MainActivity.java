@@ -5,10 +5,15 @@ import androidx.appcompat.content.res.AppCompatResources;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 
 import com.ak.ColoredDate;
 import com.ak.EventObjects;
 import com.ak.KalendarView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -53,5 +58,24 @@ public class MainActivity extends AppCompatActivity {
 
         mKalendarView.addEvents(events2);
 
+        Button btBottomDialog = findViewById(R.id.bt_bottom_dialog);
+        btBottomDialog.setOnClickListener(view -> showDialog());
+
+    }
+
+    void showDialog(){
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        View bottomSheet = getLayoutInflater().inflate(R.layout.bottom_dialog, null);
+
+        Button demo = bottomSheet.findViewById(R.id.bt_bottom_dialog);
+        KalendarView kalendarView = bottomSheet.findViewById(R.id.kalendar);
+        demo.setOnClickListener(
+                view -> {
+                    kalendarView.setInitialSelectedDate(new Date());
+                }
+        );
+
+        dialog.setContentView(bottomSheet);
+        dialog.show();
     }
 }

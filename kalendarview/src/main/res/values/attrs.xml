@@ -33,5 +33,7 @@
         <attr name="prevIcon" format="reference"/>
         <!--        color for calendar background-->
         <attr name="calendarBackground" format="color"/>
+        <!--        enable animation for month changes. Default value is true-->
+        <attr name="animatingMonths" format="boolean"/>
     </declare-styleable>
 </resources>

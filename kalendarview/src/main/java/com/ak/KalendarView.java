@@ -63,6 +63,8 @@ public class KalendarView extends LinearLayout{
     int monthTextStyle=0,weekTextStyle=0,dateTextStyle=0;
     Drawable nextIcon=null,prevIcon=null;
     int calendarBackgroundColor=0;
+    boolean animatingMonths = true;
+    GridLayoutAnimationController animationController;
 
     public KalendarView(Context context) {
         super(context);
@@ -144,6 +146,9 @@ public class KalendarView extends LinearLayout{
         if(colorBg!=0)
             calendarBackgroundColor = colorBg;
 
+        //to set the animation controller
+        animatingMonths = typedArray.getBoolean(R.styleable.KalendarView_animatingMonths,true);
+
         initializeUILayout();
         setUpCalendarAdapter();
         setPreviousButtonClickEvent();
@@ -200,6 +205,9 @@ public class KalendarView extends LinearLayout{
         llCalendarHead.setBackgroundColor(calendarBackgroundColor);
         llCalendarWeek.setBackgroundColor(calendarBackgroundColor);
         calendarGridView.setBackgroundColor(calendarBackgroundColor);
+
+        Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.grid_anim);
+        animationController = new GridLayoutAnimationController(animation, 0f, .1f);
     }
     private void setPreviousButtonClickEvent(){
         previousButton.setOnClickListener(v -> {
@@ -309,10 +317,9 @@ public class KalendarView extends LinearLayout{
         mAdapter.setCalendarBackgroundColor(calendarBackgroundColor);
         calendarGridView.setAdapter(mAdapter);
 
-//        //for animated change
-//        Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.grid_anim);
-//        GridLayoutAnimationController controller = new GridLayoutAnimationController(animation, .2f, .2f);
-//        calendarGridView.setLayoutAnimation(controller);
+        //for animating month changes
+        if(animatingMonths && !isInEditMode())
+            calendarGridView.setLayoutAnimation(animationController);
 
     }
 

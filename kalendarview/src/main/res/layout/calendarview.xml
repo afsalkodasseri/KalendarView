@@ -131,7 +131,7 @@
     <GridView
         android:id="@+id/calendar_grid"
         tools:animateLayoutChanges="false"
-        android:animateLayoutChanges="true"
+        android:animateLayoutChanges="false"
         tools:listitem="@layout/calendarview_cell"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
