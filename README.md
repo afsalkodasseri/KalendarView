@@ -50,7 +50,7 @@ dependencyResolutionManagement {
 ```
 dependancies {
   ...
-  implementation 'com.github.afsalkodasseri:KalendarView:2.3'
+  implementation 'com.github.afsalkodasseri:KalendarView:2.7'  //replace with latest
 }
 ```
 <br>
@@ -160,6 +160,7 @@ mKalendarView.setInitialSelectedDate(new Date());
 | nextIcon | Drawable for next icon | Drawable |
 | prevIcon | Drawable for prev icon | Drawable |
 | calendarBackground | color for calendar background | Color |
+| animatingMonths | enable animation for month changes. Default value is true | Boolean |
 
 <br>
 <br>
