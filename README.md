@@ -1,5 +1,5 @@
 # KalendarView
-Customisable calendar view for android
+Customizable calendar view for android
 
 Customize many things as much you need
 
